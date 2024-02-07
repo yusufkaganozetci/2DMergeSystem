@@ -1,13 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class Ball : MonoBehaviour
 {
-    public Cell currentCell;
-    public int ballLevel;
     [SerializeField] Sprite[] ballSprites;
     [SerializeField] TextMeshPro ballLevelText;
     [SerializeField] SpriteRenderer ballLevelImageSR;
@@ -15,17 +11,16 @@ public class Ball : MonoBehaviour
     [SerializeField] string ballSortingLayerName;
     [SerializeField] string movingBallSortingLayerName;
 
+    public Cell currentCell;
+    public int ballLevel;
+    
     private SpriteRenderer spriteRenderer;
-
     private bool isMoving = false;
-    // Start is called before the first frame update
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        
-        //InitializeBall();
     }
-
 
     public void AssignToCell(Cell cell)
     {
@@ -38,8 +33,6 @@ public class Ball : MonoBehaviour
     {
         transform.position = newPosition;
     }
-
-    
 
     private void Update()
     {
@@ -55,34 +48,30 @@ public class Ball : MonoBehaviour
         transform.position = desiredPos;
     }
 
-    public void PickTheBall()
-    {
-        isMoving = true;
-        spriteRenderer.sortingLayerName = movingBallSortingLayerName;
-        ballLevelImageSR.sortingLayerName = movingBallSortingLayerName;
-        ballLevelTextSortingGroup.sortingLayerName = movingBallSortingLayerName;
-        BallManager.Instance.OnBallPicked(this);
-    }
-
     public void UpdateBall()
     {
         ballLevel++;
         InitializeBall(ballLevel);
     }
 
+    public void PickTheBall()
+    {
+        isMoving = true;
+        ChangeSortingLayers(movingBallSortingLayerName);
+        BallManager.Instance.OnBallPicked(this);
+    }
+
     public void ReleaseTheBall()
     {
         isMoving = false;
-        spriteRenderer.sortingLayerName = ballSortingLayerName;
-        ballLevelImageSR.sortingLayerName = ballSortingLayerName;
-        ballLevelTextSortingGroup.sortingLayerName = ballSortingLayerName;
-
-        EventManager.Instance.TriggerTheEvent(EventType.OnBallReleased, this);
+        ChangeSortingLayers(ballSortingLayerName);
+        CellManager.Instance.SnapToCell(this);
+        BallManager.Instance.OnBallReleased();
     }
 
     private void OnMouseDown()
     {
-        EventManager.Instance.TriggerTheEvent(EventType.OnBallClicked,this);
+        PickTheBall();
     }
 
     private void OnMouseUp()
@@ -92,9 +81,17 @@ public class Ball : MonoBehaviour
 
     public void InitializeBall(int ballLevel)
     {
-        if(spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
         this.ballLevel = ballLevel;
         spriteRenderer.sprite = ballSprites[ballLevel - 1];
         ballLevelText.text = ballLevel.ToString();
     }
+
+    private void ChangeSortingLayers(string layerName)
+    {
+        spriteRenderer.sortingLayerName = layerName;
+        ballLevelImageSR.sortingLayerName = layerName;
+        ballLevelTextSortingGroup.sortingLayerName = layerName;
+    }
+
 }

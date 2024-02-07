@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-using System;
 
 public class CellManager : MonoBehaviour
 {
@@ -16,63 +14,21 @@ public class CellManager : MonoBehaviour
         if(Instance == null) Instance = this;
     }
 
-    private void Start()
+    public void SnapToCell(Ball ball)
     {
-        EventManager.Instance.SubscribeToEvent(EventType.OnBallReleased, SnapToCell);
-        EventManager.Instance.SubscribeToEvent(EventType.OnFreeCellWanted,
-            GetRandomEmptyCell);
-    }
-
-    public Cell GetCellWithID(int id)
-    {
-        Cell cell = null;
-        for(int i=0; i<allCells.Length; i++)
-        {
-            if (allCells[i].cellID == id)
-            {
-                cell = allCells[i];
-            }
-        }
-        return cell;
-    }
-
-    public Cell GetRandomEmptyCell()
-    {
-        List<Cell> emptyCells = new List<Cell>();
-        for(int i = 0; i < allCells.Length; i++)
-        {
-            if (allCells[i].ball == null)
-            {
-                emptyCells.Add(allCells[i]);
-            }
-        }
-        return emptyCells.Count >= 1 ?
-            emptyCells[UnityEngine.Random.Range(0, emptyCells.Count)] : null;
-    }
-
-    private void ResetCellAndBallInfo(Ball ball, Cell cell)
-    {
-        ball.currentCell.ball = null;
-        cell.ball = null;
-        ball.currentCell = null;
-    }
-
-    public void SnapToCell(object ballAsObject)
-    {
-        Ball ball = (Ball)ballAsObject;
         for(int i = 0; i < allCells.Length; i++)
         {
             if (Vector2.Distance(ball.transform.position, allCells[i].transform.position)
                 <= thresholdDistanceForSnapping)
             {
-                Ball ballInTheCell = allCells[i].ball;//BallManager.Instance.GetBallFromCellInfo(allCells[i]);
+                Ball ballInTheCell = allCells[i].ball;
                 if (ballInTheCell != null && ball != ballInTheCell) 
                 {
                     if(ballInTheCell.ballLevel == ball.ballLevel &&
                         ball.ballLevel != BallManager.Instance.ballMaxLevel)
                     {
                         allCells[i].RemoveBallFromCell();
-                        EventManager.Instance.TriggerTheEvent(EventType.OnBallDestroyWanted, ballInTheCell);
+                        BallManager.Instance.DestroyBall(ballInTheCell);
                         ball.UpdateBall();
                         AssignBallAndCellInfo(ball, allCells[i]);
                     }
@@ -96,6 +52,40 @@ public class CellManager : MonoBehaviour
         ResetCellAndBallInfo(ball, cell);
         cell.AssignBall(ball);
         ball.AssignToCell(cell);
+    }
+
+    private void ResetCellAndBallInfo(Ball ball, Cell cell)
+    {
+        ball.currentCell.ball = null;
+        cell.ball = null;
+        ball.currentCell = null;
+    }
+
+    public Cell GetCellWithID(int id)
+    {
+        Cell cell = null;
+        for (int i = 0; i < allCells.Length; i++)
+        {
+            if (allCells[i].cellID == id)
+            {
+                cell = allCells[i];
+            }
+        }
+        return cell;
+    }
+
+    public Cell GetRandomEmptyCell()
+    {
+        List<Cell> emptyCells = new List<Cell>();
+        for (int i = 0; i < allCells.Length; i++)
+        {
+            if (allCells[i].ball == null)
+            {
+                emptyCells.Add(allCells[i]);
+            }
+        }
+        return emptyCells.Count >= 1 ?
+            emptyCells[Random.Range(0, emptyCells.Count)] : null;
     }
 
 }

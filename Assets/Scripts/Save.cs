@@ -1,19 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-[Serializable]
-public class BallData
-{
-    public int ballLevel, assignedCellID;
-
-    public BallData(int ballLevel, int assignedCellID)
-    {
-        this.ballLevel = ballLevel;
-        this.assignedCellID = assignedCellID;
-    }
-}
 
 [CreateAssetMenu(menuName = "Scriptable Objects/Save")]
 public class Save : ScriptableObject

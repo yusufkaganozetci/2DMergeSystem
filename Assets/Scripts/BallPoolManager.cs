@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,7 +24,7 @@ public class BallPoolManager : MonoBehaviour
         }
         else
         {
-            ball = Instantiate(ballPrefab.gameObject).GetComponent<Ball>();
+            ball = Instantiate(ballPrefab);
         }
         return ball;
     }
