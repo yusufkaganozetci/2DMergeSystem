@@ -23,7 +23,7 @@ public class Ball : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         
-        InitializeBall();
+        //InitializeBall();
     }
 
 
@@ -67,7 +67,7 @@ public class Ball : MonoBehaviour
     public void UpdateBall()
     {
         ballLevel++;
-        InitializeBall();
+        InitializeBall(ballLevel);
     }
 
     public void ReleaseTheBall()
@@ -90,9 +90,10 @@ public class Ball : MonoBehaviour
         ReleaseTheBall();
     }
 
-    public void InitializeBall()
+    public void InitializeBall(int ballLevel)
     {
         if(spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+        this.ballLevel = ballLevel;
         spriteRenderer.sprite = ballSprites[ballLevel - 1];
         ballLevelText.text = ballLevel.ToString();
     }

@@ -17,9 +17,12 @@ public class GameManager : MonoBehaviour
 
     private void ResetCellAndBallInfo(Ball ball, Cell cell)
     {
-        ball.currentCell.ball = null;
+        ball.ballLevel = 1;
+        //ball.currentCell.ball = null;
         cell.ball = null;
         ball.currentCell = null;
-        Destroy(ball.gameObject);
+        
+        BallPoolManager.Instance.SendBallBackToPool(ball);
+       // Destroy(ball.gameObject);
     }
 }

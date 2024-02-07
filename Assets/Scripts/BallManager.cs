@@ -26,12 +26,15 @@ public class BallManager : MonoBehaviour
 
     }
 
+    
+
     public void AddNewBall()
     {
         Cell emptyCell = (Cell)EventManager.Instance.TriggerTheEvent(EventType.OnFreeCellWanted);
         if(emptyCell != null)
         {
-            Ball newlyGeneratedBall = Instantiate(ballPrefab).GetComponent<Ball>();
+            Ball newlyGeneratedBall = BallPoolManager.Instance.GetBallFromPool();//Instantiate(ballPrefab).GetComponent<Ball>();
+            newlyGeneratedBall.InitializeBall(1);
             newlyGeneratedBall.AssignToCell(emptyCell);
             emptyCell.AssignBall(newlyGeneratedBall);
             balls.Add(newlyGeneratedBall);
@@ -40,12 +43,12 @@ public class BallManager : MonoBehaviour
 
     public void GenerateBall(BallData ballData)
     {
-        Ball newlyGeneratedBall = Instantiate(ballPrefab).GetComponent<Ball>();
+        Ball newlyGeneratedBall = BallPoolManager.Instance.GetBallFromPool();
         Cell cell = CellManager.Instance.GetCellWithID(ballData.assignedCellID);
         newlyGeneratedBall.ballLevel = ballData.ballLevel;
         
         newlyGeneratedBall.AssignToCell(cell);
-        newlyGeneratedBall.InitializeBall();
+        newlyGeneratedBall.InitializeBall(newlyGeneratedBall.ballLevel);
         cell.AssignBall(newlyGeneratedBall);
         balls.Add(newlyGeneratedBall);
     }
@@ -79,8 +82,11 @@ public class BallManager : MonoBehaviour
 
     public void DestroyBall(object ball)
     {
-        balls.Remove((Ball)ball);
-        Destroy(((Ball)ball).gameObject);
+        Ball currentBall = (Ball) ball;
+        balls.Remove(currentBall);
+        currentBall.ballLevel = 1;
+        BallPoolManager.Instance.SendBallBackToPool(currentBall);
+        //Destroy(((Ball)ball).gameObject);
     }
 
     public void ReleaseTheBall(object ball)
