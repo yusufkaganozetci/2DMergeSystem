@@ -41,3 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Cell
+    uniqueID: 2793693515
+    locked: 0
+  - name: Cell Background
+    uniqueID: 852438615
+    locked: 0
+  - name: Ball
+    uniqueID: 4204834849
+    locked: 0
+  - name: Moving Ball
+    uniqueID: 4099080413
+    locked: 0
